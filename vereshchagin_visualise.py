@@ -196,34 +196,44 @@ class VereshchaginVisualiser:
                 curvature = f * 0.2
                 y_vals = base_line + bump * curvature
 
-                if f >= 0:
+                cross_axis = (h_left >= 0 and h_right <= 0) or (h_left <= 0 and h_right >= 0)
 
-                    trapezoid_coords = [(x0, 0), (x0, h_left), (x0 + x, h_right), (x0 + x, 0)]
-                    ax.add_patch(
-                        patches.Polygon(trapezoid_coords, closed=True, color=color, alpha=alpha)
-                    )
-                    ax.fill_between(x_vals, base_line, y_vals, color=color, alpha=alpha)
+                if cross_axis:
+                    ax.fill_between(x_vals, 0, y_vals, color=color, alpha=alpha)
+                    ax.plot(x_vals, y_vals, color=color, linewidth=2, alpha=alpha)
+                    peak_x = x0 + x / 2
+                    peak_y = max(y_vals) if f >= 0 else min(y_vals)
+                    ax.text(peak_x, peak_y + 0.2 if f >= 0 else peak_y - 0.2,
+                            f"f = {round(f, 2)}", ha='center', va='bottom' if f >= 0 else 'top')
+
                 else:
+                    if f >= 0 and not (h_left < 0 and h_right < 0):
+                        points = (
+                                [(x0, 0)] +
+                                list(zip(x_vals, y_vals)) +
+                                [(x0 + x, 0)]
+                        )
+                        ax.add_patch(
+                            patches.Polygon(points, closed=True, color=color, alpha=alpha)
+                        )
+                    else:
+                        points = (
+                                [(x0, 0)] +
+                                list(zip(x_vals, y_vals)) +
+                                [(x0 + x, 0)]
+                        )
+                        ax.add_patch(
+                            patches.Polygon(points, closed=True, color=color, alpha=alpha)
+                        )
 
-                    points = (
-                            [(x0, 0)] +
-                            list(zip(x_vals, y_vals)) +
-                            [(x0 + x, 0)]
-                    )
-                    ax.add_patch(
-                        patches.Polygon(points, closed=True, color=color, alpha=alpha)
-                    )
-
-                ax.plot(x_vals, y_vals, color=color, linewidth=2, alpha=alpha)
-
-                peak_x = x0 + x / 2
-                peak_y = (h_left + h_right) / 2 + curvature
-                ax.text(peak_x, peak_y + 0.2 if f >= 0 else peak_y - 0.2,
-                        f"f = {round(f, 2)}", ha='center', va='bottom' if f >= 0 else 'top')
+                    ax.plot(x_vals, y_vals, color=color, linewidth=2, alpha=alpha)
+                    peak_x = x0 + x / 2
+                    peak_y = (h_left + h_right) / 2 + curvature
+                    ax.text(peak_x, peak_y + 0.2 if f >= 0 else peak_y - 0.2,
+                            f"f = {round(f, 2)}", ha='center', va='bottom' if f >= 0 else 'top')
 
                 ax.text(x0 - 0.3, h_left / 2, f"hL = {h_left}", ha='right', va='center', rotation=90)
                 ax.text(x0 + x + 0.3, h_right / 2, f"hR = {h_right}", ha='left', va='center', rotation=90)
-
                 ax.text(x0 + x / 2, -0.3, f"x = {x}", ha='center', va='top')
 
             case _:
