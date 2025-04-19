@@ -1,8 +1,8 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='VereshchaginPy',
-    version='0.1.0',
+    name='vereshchaginpy',
+    version='0.1.1',
     author='Julian Haudek',
     author_email='julianhaudek@gmail.com',
     description='Graph-based integration for structural mechanics using the Vereshchagin method',
