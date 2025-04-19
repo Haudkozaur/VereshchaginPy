@@ -9,8 +9,8 @@ The integration is based on the principle that the integral from two graphs can 
 
 
 Where:
-- `A` is the area enclosed by the first graph
-- `y` is the vertical coordinate of the centroid of area `A`,
+- `A` is the area under the first moment diagram `Mi(x)`.
+- `y` is the corresponding ordinate (value) from the second moment diagram `Mj(x)`, evaluated at the centroid of the area `A`.
 - `Mi`, `Mj` are continuous functions (e.g., moments) over a shared length `L`.
 
 This library helps formalize that process by abstracting common shape-based 
