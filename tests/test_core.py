@@ -1,6 +1,6 @@
 import pytest
 import vereshchagin_figures as vf
-
+from vereshchagin_visualise import VereshchaginVisualiser
 
 @pytest.mark.parametrize(
     "fig1, fig2, expected",
@@ -34,8 +34,75 @@ import vereshchagin_figures as vf
         (vf.Trapezoid(10, -2, 3), vf.Parabola(10, -5), (1/3) * (10*3*((-5*10**2)/8)) + (1/3) * (10*(-2)*((-5*10**2)/8))),
 
         (vf.Parabola(5.5, 2), vf.Parabola(5.5, -4.77), (8/15)*(5.5*(2*5.5**2)/8)*((-4.77*5.5**2)/8)),
+
+        (vf.ParabolicTrapezoid(3, 3, -2, 2), vf.Rectangle(3, -2), -12.0),
+        (vf.ParabolicTrapezoid(2.5, 2, 2.7, -1), vf.TriangleLeft(2.5, -2), -4.28125),
+        (vf.ParabolicTrapezoid(2.5, 2, 2.7, -1), vf.TriangleRight(2.5, -2), -4.864583),
+        (vf.ParabolicTrapezoid(2.5, 2, 2.7, -1), vf.Trapezoid(2.5, 2, -2), -0.58333333),
+        (vf.ParabolicTrapezoid(2.5, 2, 2.7, -1), vf.Parabola(2.5, -1), -2.2460937499),
+        (vf.ParabolicTrapezoid(9, 2, 2.7, -1), vf.ParabolicTrapezoid(9, 7.68, 99, 30), -12543.696),
     ],)
 
 
 def test_pairs(fig1, fig2, expected):
     assert fig1+fig2 == pytest.approx(expected, rel=1e-6)
+
+def test_add_mismatched_x_raises():
+    fig1 = vf.Rectangle(5, 3)
+    fig2 = vf.Rectangle(6, 3)  # różne x
+    with pytest.raises(ValueError, match="x of figures doesn't match"):
+        _ = fig1 + fig2
+
+
+def test_integrate_pair_mismatched_x_raises():
+    fig1 = vf.Parabola(3, 2)
+    fig2 = vf.TriangleLeft(5, 2)  # różne x
+    with pytest.raises(ValueError, match="x of figures doesn't match"):
+        fig1 + fig2
+
+
+def test_draw_situation_mismatched_x_raises():
+    fig1 = vf.TriangleRight(2, 5)
+    fig2 = vf.Trapezoid(3, 1, 2)  # różne x
+    viz = VereshchaginVisualiser()
+    with pytest.raises(ValueError, match="x of figures doesn't match"):
+        viz.draw_situation(fig1, fig2)
+
+
+@pytest.mark.parametrize("invalid_input", [
+    "not_a_figure",
+    123,
+    None,
+    3.14,
+    object()
+])
+def test_add_invalid_type_raises(invalid_input):
+    fig = vf.Rectangle(5, 2)
+    with pytest.raises(TypeError, match=r"Unsupported figure type"):
+        _ = fig + invalid_input
+
+
+@pytest.mark.parametrize("invalid_input", [
+    "not_a_figure",
+    123,
+    None,
+    3.14,
+    object()
+])
+def test_draw_figure_invalid_type_raises(invalid_input):
+    viz = VereshchaginVisualiser()
+    with pytest.raises(TypeError, match=r"Unsupported figure type"):
+        viz.draw_figure(invalid_input)
+
+
+@pytest.mark.parametrize("invalid_input", [
+    "not_a_figure",
+    123,
+    None,
+    3.14,
+    object()
+])
+def test_integrate_pair_invalid_type_raises(invalid_input):
+    fig = vf.Rectangle(5, 2)
+    with pytest.raises(TypeError, match=r"Unsupported figure type"):
+        _ = vf.integrate_pair(fig, invalid_input)
