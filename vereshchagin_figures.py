@@ -2,8 +2,29 @@ from vereshchagin_core import integrate_pair
 from abc import ABC, abstractmethod
 
 class Figure(ABC):
+
+    """
+    Abstract base class for all Vereshchagin figure types.
+
+    All geometric shapes (e.g., Rectangle, TriangleLeft, Trapezoid) must inherit from this class
+    and implement the `__add__` method, which defines how figures can be combined
+    into pairs for integration purposes.
+    """
+
     @abstractmethod
     def __add__(self, other):
+        """
+        Performs integration between two figure instances using the `+` operator.
+
+        This method defines how two compatible Vereshchagin figures interact when added together,
+        and returns the result of their integration as a float.
+
+        Args:
+            other: Another figure instance to integrate with.
+
+        Returns:
+            A float representing the result of the integration between the two figures.
+        """
         pass
 
 class Rectangle(Figure):
@@ -21,7 +42,6 @@ class Rectangle(Figure):
         self.height = height
 
     def __add__(self, other):
-
         return integrate_pair(self, other)
 
 
@@ -126,6 +146,24 @@ class ParabolicTrapezoid(Figure):
         self.line_load = line_load
 
     def __add__(self, other):
-
         return integrate_pair(self, other)
 
+def validate_figure(obj):
+    """
+    Validates that the object is an instance of a supported Vereshchagin figure.
+
+    Args:
+        obj: Any object.
+
+    Raises:
+        TypeError: If the object is not a supported figure type.
+    """
+    if not isinstance(obj, (
+        Rectangle,
+        TriangleLeft,
+        TriangleRight,
+        Trapezoid,
+        Parabola,
+        ParabolicTrapezoid
+    )):
+        raise TypeError(f"Unsupported figure type: {type(obj).__name__}")

@@ -2,6 +2,26 @@ import vereshchagin_figures as vf
 from vereshchagin_pairs import get_figure_pair_type, FigureType
 
 def integrate_pair(figure_1, figure_2):
+
+    """
+    Computes the definite integral representing the interaction between two figures.
+
+    Based on the specific combination of figure types, the method applies appropriate
+    analytical integration formulas to calculate the area or product under the curve,
+    typically used in the context of structural mechanics or moment interactions.
+
+    Args:
+        figure_1: The first geometric figure object.
+        figure_2: The second geometric figure object.
+
+    Returns:
+        A float value representing the computed integral.
+
+    Raises:
+        TypeError: If the combination of figure types is unsupported.
+        ValueError: If the figures have mismatched widths (`x` values).
+    """
+
     pair_type = get_figure_pair_type(figure_1, figure_2)
 
     match pair_type:

@@ -6,95 +6,82 @@ from vereshchagin_pairs import get_figure_pair_type, FigureType
 
 class VereshchaginVisualiser:
 
-    def draw_situation(self, figure_1, figure_2):
-        pair_type = get_figure_pair_type(figure_1, figure_2)
+    """
+    Optional utility class for visualizing figure combinations involved in the integration process.
+
+    This class provides a graphical interface for plotting two geometric figures that are subject
+    to integration. It helps in understanding how the shapes interact and how their combination
+    contributes to the resulting integral. Colors, alpha blending, annotations, and layout are
+    handled automatically depending on the type of figures provided.
+
+    Instances of this class expose the methods `draw_situation(...)`,and draw_figure(...) for plotting
+    one or two figures, respectively. The figures are expected to be instances of the VereshchaginFigures.
+    """
+
+    def draw_figure(self, figure):
+        """
+        Displays a single figure on a standalone plot.
+
+        Useful for quickly visualizing the shape, parameters, and annotations
+        of a single object (e.g., Rectangle, TriangleLeft, Parabola, etc.).
+
+        Args:
+            figure: The figure object to display.
+        """
+
+        vf.validate_figure(figure)
         fig, ax = plt.subplots()
 
-        match pair_type:
-            case FigureType.RECTANGLE_RECTANGLE:
-                self.draw_single(ax, figure_1, 'blue', 0.4, label_offset=0)
-                self.draw_single(ax, figure_2, 'red', 0.4, label_offset=0.5)
+        self._draw_single(ax, figure, color='blue', alpha=0.4, label_offset=0)
 
-            case FigureType.RECTANGLE_TRIANGLE_LEFT:
-                self.draw_single(ax, figure_1, 'blue', 0.4, label_offset=0)
-                self.draw_single(ax, figure_2, 'red', 0.4, label_offset=0.5)
+        # Set proper y-limits
+        heights = []
+        if hasattr(figure, "height"):
+            heights.append(figure.height)
+        elif hasattr(figure, "height_left") and hasattr(figure, "height_right"):
+            heights.extend([figure.height_left, figure.height_right])
+        else:
+            heights.append(0)
 
-            case FigureType.RECTANGLE_TRIANGLE_RIGHT:
-                self.draw_single(ax, figure_1, 'blue', 0.4, label_offset=0)
-                self.draw_single(ax, figure_2, 'red', 0.4, label_offset=0.5)
+        min_y = min(0, *heights)
+        max_y = max(0, *heights)
+        padding = (max_y - min_y) * 0.2 or 1
+        ax.set_ylim(min_y - padding, max_y + padding)
 
-            case FigureType.TRIANGLE_LEFT_TRIANGLE_LEFT:
-                self.draw_single(ax, figure_1, 'blue', 0.4, label_offset=0)
-                self.draw_single(ax, figure_2, 'red', 0.4, label_offset=0.5)
+        ax.axhline(0, color='black', linewidth=1)
+        ax.set_xlim(0, figure.x)
+        ax.set_xticks([])
+        ax.set_yticks([])
+        ax.set_xlabel("")
+        ax.set_ylabel("")
+        ax.grid(False)
+        for spine in ax.spines.values():
+            spine.set_visible(False)
 
-            case FigureType.TRIANGLE_LEFT_TRIANGLE_RIGHT:
-                self.draw_single(ax, figure_1, 'blue', 0.4, label_offset=0)
-                self.draw_single(ax, figure_2, 'red', 0.4, label_offset=0.5)
+        plt.title(f'Figure: {type(figure).__name__}')
+        plt.show()
 
-            case FigureType.TRIANGLE_RIGHT_TRIANGLE_RIGHT:
-                self.draw_single(ax, figure_1, 'blue', 0.4, label_offset=0)
-                self.draw_single(ax, figure_2, 'red', 0.4, label_offset=0.5)
+    def draw_situation(self, figure_1, figure_2):
+        """
+        Displays a visual representation of the interaction between two figures on a shared plot.
 
-            case FigureType.RECTANGLE_TRAPEZOID:
-                self.draw_single(ax, figure_1, 'blue', 0.4, label_offset=0)
-                self.draw_single(ax, figure_2, 'red', 0.4, label_offset=0.5)
+        Based on the types of the input figures, the correct rendering logic is applied
+        using the internal `_draw_single` method. Annotations, colors, layout, and axis
+        scaling are handled automatically.
 
-            case FigureType.RECTANGLE_PARABOLA:
-                self.draw_single(ax, figure_1, 'blue', 0.4, label_offset=0)
-                self.draw_single(ax, figure_2, 'red', 0.4, label_offset=0.5)
+        Args:
+            figure_1: The first figure to display.
+            figure_2: The second figure to display.
+        """
+        vf.validate_figure(figure_1)
+        vf.validate_figure(figure_2)
 
-            case FigureType.TRIANGLE_LEFT_TRAPEZOID:
-                self.draw_single(ax, figure_1, 'blue', 0.4, label_offset=0)
-                self.draw_single(ax, figure_2, 'red', 0.4, label_offset=0.5)
+        if figure_1.x != figure_2.x:
+            raise ValueError(f"x of figures doesn't match: x1 = {figure_1.x}, x2 = {figure_2.x}")
 
-            case FigureType.TRIANGLE_LEFT_PARABOLA:
-                self.draw_single(ax, figure_1, 'blue', 0.4, label_offset=0)
-                self.draw_single(ax, figure_2, 'red', 0.4, label_offset=0.5)
+        fig, ax = plt.subplots()
+        self._draw_pair(ax, figure_1, figure_2)
 
-            case FigureType.TRIANGLE_RIGHT_PARABOLA:
-                self.draw_single(ax, figure_1, 'blue', 0.4, label_offset=0)
-                self.draw_single(ax, figure_2, 'red', 0.4, label_offset=0.5)
-
-            case FigureType.TRIANGLE_RIGHT_TRAPEZOID:
-                self.draw_single(ax, figure_1, 'blue', 0.4, label_offset=0)
-                self.draw_single(ax, figure_2, 'red', 0.4, label_offset=0.5)
-
-            case FigureType.TRAPEZOID_TRAPEZOID:
-                self.draw_single(ax, figure_1, 'blue', 0.4, label_offset=0)
-                self.draw_single(ax, figure_2, 'red', 0.4, label_offset=0.5)
-
-            case FigureType.TRAPEZOID_PARABOLA:
-                self.draw_single(ax, figure_1, 'blue', 0.4, label_offset=0)
-                self.draw_single(ax, figure_2, 'red', 0.4, label_offset=0.5)
-
-            case FigureType.PARABOLA_PARABOLA:
-                self.draw_single(ax, figure_1, 'blue', 0.4, label_offset=0)
-                self.draw_single(ax, figure_2, 'red', 0.4, label_offset=0.5)
-
-            case FigureType.PARABOLIC_TRAPEZOID_RECTANGLE:
-                self.draw_single(ax, figure_1, 'blue', 0.4, label_offset=0)
-                self.draw_single(ax, figure_2, 'red', 0.4, label_offset=0.5)
-            case FigureType.PARABOLIC_TRAPEZOID_TRIANGLE_LEFT:
-                self.draw_single(ax, figure_1, 'blue', 0.4, label_offset=0)
-                self.draw_single(ax, figure_2, 'red', 0.4, label_offset=0.5)
-            case FigureType.PARABOLIC_TRAPEZOID_TRIANGLE_RIGHT:
-                self.draw_single(ax, figure_1, 'blue', 0.4, label_offset=0)
-                self.draw_single(ax, figure_2, 'red', 0.4, label_offset=0.5)
-            case FigureType.PARABOLIC_TRAPEZOID_TRAPEZOID:
-                self.draw_single(ax, figure_1, 'blue', 0.4, label_offset=0)
-                self.draw_single(ax, figure_2, 'red', 0.4, label_offset=0.5)
-            case FigureType.PARABOLIC_TRAPEZOID_PARABOLA:
-                self.draw_single(ax, figure_1, 'blue', 0.4, label_offset=0)
-                self.draw_single(ax, figure_2, 'red', 0.4, label_offset=0.5)
-            case FigureType.PARABOLIC_TRAPEZOID_PARABOLIC_TRAPEZOID:
-
-                self.draw_single(ax, figure_1, 'blue', 0.4, label_offset=0.5)
-                self.draw_single(ax, figure_2, 'red', 0.4, label_offset=0)
-
-            case _:
-                raise TypeError(
-                    f"Unsupported figure combination: {type(figure_1).__name__} + {type(figure_2).__name__}"
-                )
         heights = []
         for fig in [figure_1, figure_2]:
             if hasattr(fig, "height"):
@@ -106,7 +93,7 @@ class VereshchaginVisualiser:
 
         min_y = min(0, *heights)
         max_y = max(0, *heights)
-        padding = (max_y - min_y) * 0.2 or 1  # zawsze jakiś margines
+        padding = (max_y - min_y) * 0.2 or 1
         ax.set_ylim(min_y - padding, max_y + padding)
 
         ax.axhline(0, color='black', linewidth=1)
@@ -122,7 +109,23 @@ class VereshchaginVisualiser:
         plt.title(f'Situation: {type(figure_1).__name__} + {type(figure_2).__name__}')
         plt.show()
 
-    def draw_single(self, ax, fig, color, alpha, label_offset=0.0):
+    def _draw_single(self, ax, fig, color, alpha, label_offset=0.0):
+
+        """
+        Internal method for drawing a single figure onto a given Matplotlib axis.
+
+        This method handles all supported figure types and applies appropriate geometry,
+        shading, and annotations. Not intended to be called directly by users — use
+        `draw_figure(...)` instead.
+
+        Args:
+            ax: The Matplotlib axis to draw on.
+            fig: The figure object to render.
+            color: The fill color for the figure.
+            alpha: The transparency level for the fill.
+            label_offset: Vertical or horizontal offset applied to labels for clarity.
+        """
+
         x0 = 0
 
         match fig:
@@ -177,7 +180,7 @@ class VereshchaginVisualiser:
 
             case vf.Parabola(x=x, line_load=load):
                 f = (load * x ** 2) / 8
-                self.draw_parabola_through_points(
+                self._draw_parabola_through_points(
                     ax,
                     x1=0,
                     x2=x,
@@ -239,7 +242,39 @@ class VereshchaginVisualiser:
             case _:
                 raise TypeError(f"Unsupported figure type in overlay: {type(fig).__name__}")
 
-    def draw_parabola_through_points(self, ax, x1, x2, ymax, color, alpha, label):
+    def _draw_pair(self, ax, fig1, fig2):
+
+        """
+        Internal helper to draw a standard pair of figures on the same axis.
+
+        Args:
+            ax: Matplotlib axis to draw on.
+            fig1: First figure object (drawn in blue).
+            fig2: Second figure object (drawn in red).
+        """
+        self._draw_single(ax, fig1, 'blue', 0.4, label_offset=0)
+        self._draw_single(ax, fig2, 'red', 0.4, label_offset=0.5)
+
+    def _draw_parabola_through_points(self, ax, x1, x2, ymax, color, alpha, label):
+
+        """
+        Internal helper for drawing a parabola that passes through two x-zeros and a given peak.
+
+        Constructs a quadratic curve defined by three points: two zeros and a vertex.
+        Used by other drawing methods for visualizing parabolic shapes.
+
+        Not intended for direct use outside the class.
+
+        Args:
+            ax: The Matplotlib axis to draw on.
+            x1: The first x-position (zero point).
+            x2: The second x-position (zero point).
+            ymax: The y-value at the vertex (peak of the parabola).
+            color: The line and fill color.
+            alpha: The transparency level of the fill.
+            label: Text label to annotate the vertex.
+        """
+
         xv = (x1 + x2) / 2
         A = np.array([
             [x1 ** 2, x1, 1],

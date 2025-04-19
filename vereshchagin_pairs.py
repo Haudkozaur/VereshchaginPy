@@ -1,10 +1,34 @@
 import vereshchagin_figures as vf
 from enum import Enum, auto
 
+def get_figure_pair_type(figure_1, figure_2):
 
-def get_figure_pair_type(fig1, fig2):
-    type_1 = type(fig1)
-    type_2 = type(fig2)
+    """
+    Determines the type of figure pair based on the two provided figures.
+
+    This function maps combinations of geometric figure classes to a unique
+    FigureType enum value. It validates that both figures share the same width (x),
+    and returns an appropriate enum constant based on the types of the inputs.
+
+    Args:
+        figure_1: The first figure instance.
+        figure_2: The second figure instance.
+
+    Returns:
+        A FigureType enum member representing the combination of the two figures.
+
+    Raises:
+        ValueError: If the figures have mismatched widths (x),
+                    or if their type combination is not supported.
+    """
+    vf.validate_figure(figure_1)
+    vf.validate_figure(figure_2)
+
+    if figure_1.x != figure_2.x:
+        raise ValueError(f"x of figures doesn't match: x1 = {figure_1.x}, x2 = {figure_2.x}")
+
+    type_1 = type(figure_1)
+    type_2 = type(figure_2)
     pair = frozenset([type_1, type_2])
 
     mapping = {
@@ -36,6 +60,15 @@ def get_figure_pair_type(fig1, fig2):
 
 
 class FigureType(Enum):
+
+    """
+    Enum representing all supported combinations of figure types.
+
+    Each enum member corresponds to a specific pairing of geometric figures
+    (e.g., Rectangle + TriangleLeft, Parabola + Parabola, etc.) and is used
+    to drive the correct visualization and integration logic in the system.
+    """
+
     RECTANGLE_RECTANGLE = auto()
     RECTANGLE_TRIANGLE_LEFT = auto()
     RECTANGLE_TRIANGLE_RIGHT = auto()
