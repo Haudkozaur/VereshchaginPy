@@ -1,6 +1,6 @@
 import pytest
-import vereshchagin_figures as vf
-from vereshchagin_visualise import VereshchaginVisualiser
+from vereshchaginpy import vereshchagin_figures as vf
+from vereshchaginpy.vereshchagin_visualise import VereshchaginVisualiser
 
 @pytest.mark.parametrize(
     "fig1, fig2, expected",
