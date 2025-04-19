@@ -1,6 +1,12 @@
 from vereshchagin_core import integrate_pair
+from abc import ABC, abstractmethod
 
-class Rectangle:
+class Figure(ABC):
+    @abstractmethod
+    def __add__(self, other):
+        pass
+
+class Rectangle(Figure):
     """
     Represents a rectangular segment of a linear constant function,
     typically used for plotting or modeling constant-value beam segments.
@@ -19,7 +25,7 @@ class Rectangle:
         return integrate_pair(self, other)
 
 
-class TriangleLeft:
+class TriangleLeft(Figure):
     """
     Represents a left-aligned triangular segment of a linear function,
     where the value linearly increases from 0 to a maximum at the left end.
@@ -37,7 +43,7 @@ class TriangleLeft:
         return integrate_pair(self, other)
 
 
-class TriangleRight:
+class TriangleRight(Figure):
     """
     Represents a right-aligned triangular segment of a linear function,
     where the value linearly decreases from a maximum at the right end to 0.
@@ -54,7 +60,7 @@ class TriangleRight:
         return integrate_pair(self, other)
 
 
-class Trapezoid:
+class Trapezoid(Figure):
     """
     Represents a trapezoidal segment of a linear function,
     where the value changes linearly from a left value to a right value over the segment's length.
@@ -74,7 +80,7 @@ class Trapezoid:
         return integrate_pair(self, other)
 
 
-class Parabola:
+class Parabola(Figure):
     """
     Represents a parabolic segment caused by a uniformly distributed line load
     over a specified length. The resulting function is quadratic, with zero values
@@ -94,7 +100,7 @@ class Parabola:
         return integrate_pair(self, other)
 
 
-class ParabolicTrapezoid:
+class ParabolicTrapezoid(Figure):
     """
     Represents a parabolic segment with defined boundary values, caused by a constant
     uniformly distributed load acting along the segment's length.
