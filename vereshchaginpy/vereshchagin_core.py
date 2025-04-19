@@ -1,5 +1,7 @@
-import vereshchagin_figures as vf
-from vereshchagin_pairs import get_figure_pair_type, FigureType
+from . import vereshchagin_figures as vf
+
+from .vereshchagin_pairs import get_figure_pair_type, FigureType
+
 
 def integrate_pair(figure_1, figure_2):
 

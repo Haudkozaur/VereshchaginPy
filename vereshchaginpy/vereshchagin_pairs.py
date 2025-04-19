@@ -1,4 +1,5 @@
-import vereshchagin_figures as vf
+from . import vereshchagin_figures as vf
+
 from enum import Enum, auto
 
 def get_figure_pair_type(figure_1, figure_2):
