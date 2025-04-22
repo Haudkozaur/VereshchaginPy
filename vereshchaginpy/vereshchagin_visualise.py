@@ -1,8 +1,9 @@
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 import numpy as np
-import vereshchagin_figures as vf
-from vereshchagin_pairs import get_figure_pair_type, FigureType
+from . import vereshchagin_figures as vf
+from .vereshchagin_pairs import get_figure_pair_type, FigureType
+
 
 class VereshchaginVisualiser:
 

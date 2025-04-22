@@ -1,5 +1,5 @@
-from vereshchagin_figures import Rectangle, TriangleLeft, TriangleRight, Parabola, ParabolicTrapezoid, Trapezoid
-from vereshchagin_visualise import VereshchaginVisualiser
+from vereshchaginpy.vereshchagin_figures import Rectangle, TriangleLeft, TriangleRight, Parabola, ParabolicTrapezoid, Trapezoid
+from vereshchaginpy.vereshchagin_visualise import VereshchaginVisualiser
 
 # Example I
 # Integrating a rectangle and a left triangle (with height 0 at the right end and 2 at the left), both spanning length 5

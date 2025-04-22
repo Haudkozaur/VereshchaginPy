@@ -1,5 +1,8 @@
-from vereshchagin_core import integrate_pair
 from abc import ABC, abstractmethod
+from .vereshchagin_core import integrate_pair
+
+
+
 
 class Figure(ABC):
 
